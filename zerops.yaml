@@ -1,0 +1,35 @@
+zerops:
+  - setup: kibana
+    build:
+      deployFiles:
+        - kibana/
+    deploy:
+      readinessCheck:
+        httpGet:
+          path: /
+          port: 5601
+    run:
+      os: ubuntu
+      base: ubuntu@24.04
+      envVariables:
+        ELASTICSEARCH_URL: http://elkstorage:9200 # Change, if your Elasticsearch runs on different hostname.
+        ELASTICSEARCH_PASSWORD: ${elkstorage_password}
+        PUBLIC_BASE_URL: ${PUBLIC_BASE_URL_OVERRIDE:-$zeropsSubdomain}
+        NODE_OPTIONS_MAX_OLD_SPACE_SIZE: ${NODE_OPTIONS_MAX_OLD_SPACE_SIZE_OVERRIDE:-1024} # Default --max-old-space-size seems to be 2G.
+      ports:
+        - port: 5601
+          httpSupport: true
+      prepareCommands:
+        - wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+        - echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+        - sudo apt-get update && sudo apt-get install kibana=8.16.6
+        - sudo apt-get autoremove && sudo apt-get clean # Make runtime image smaller.
+      envReplace:
+        delimiter: '%%'
+        target:
+          - kibana/
+      initCommands:
+        - sudo cp -vfr kibana/* /etc/kibana
+        - sudo chown -R kibana /etc/kibana
+        - sudo systemctl enable kibana
+        - sudo systemctl start kibana
