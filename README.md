@@ -1,4 +1,3 @@
-<!-- #ZEROPS_REMOVE_START# -->
 # Zerops x Elastic Stack
 
 Elastic is a distributed search and analytics engine at the core of the Elastic Stack, designed for storing, searching, and analyzing large volumes of structured and unstructured data in near real-time.
@@ -104,7 +103,8 @@ services:
     envSecrets:
       SECRET_TOKEN: <@generateRandomString(<32>)>
 ```
-<!-- #ZEROPS_REMOVE_END# -->
+
+<!-- #ZEROPS_EXTRACT_START:maintenance-guide# -->
 
 ## Adding More Containers
 
@@ -127,3 +127,5 @@ More about it here: https://www.elastic.co/docs/reference/kibana/configuration-r
 
 If you encounter problems with Kibana associated with the `JavaScript heap out of memory` messages in runtime logs,
 increase the `--max-old-space-size` option by setting `NODE_OPTIONS_MAX_OLD_SPACE_SIZE_OVERRIDE` environment variable to values higher than `1024` and [trigger re-deploy](https://docs.zerops.io/features/pipeline#using-zerops-gui).
+
+<!-- #ZEROPS_EXTRACT_END:maintenance-guide# -->
